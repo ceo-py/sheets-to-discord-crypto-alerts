@@ -14,9 +14,9 @@ const CONFIG = {
   changingValueCells: ["H13", "E13", "B7", "C7", "E17"],
   changingColorCells: ["H11", "H15", "I2", "I4", "I3"],
   trackingCurrency: {
-    SPX: null,
-    HNT: null,
     SOL: null,
+    HNT: null,
+    SPX: null,
   },
 };
 
@@ -130,12 +130,12 @@ function myFunction() {
   const [h13, e13, b7, c7, e17] = CONFIG.changingValueCells.map((cell) =>
     getCellValue(sheet, cell)
   );
-  const [h11Helium, h15Sp8de, i2Sp8de, i3Helium, i4Solana] =
+  const [h11Helium, h15Solana, i2Solana, i3Helium, i4Sp8de] =
     CONFIG.changingColorCells.map((cell) => getCellRange(sheet, cell));
 
-  setColorBackgroundCells(CONFIG, "SPX", [i2Sp8de, h15Sp8de]);
+  setColorBackgroundCells(CONFIG, "SOL", [i2Solana, h15Solana]);
   setColorBackgroundCells(CONFIG, "HNT", [i3Helium, h11Helium]);
-  setColorBackgroundCells(CONFIG, "SOL", [i4Solana, i4Solana]);
+  setColorBackgroundCells(CONFIG, "SPX", [i4Sp8de, i4Sp8de]);
 
   const valueDifference = h13 - e13;
 
