@@ -158,7 +158,7 @@ function myFunction() {
   changeCellBackgroundColor(getCellRange(sheet, "D7"));
   changeCellBackgroundColor(getCellRange(sheet, "G13"));
 
-  if (e17 === 0.0) {
+  if (e17 === 0.00) {
     return;
   }
   if (valueDifference >= b7 || valueDifference <= c7) {
