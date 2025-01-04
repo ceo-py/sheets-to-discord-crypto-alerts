@@ -1,5 +1,5 @@
 const discordUrl =
-  "https://discord.com/api/webhooks/1185513855909105735/6AdmZTCN_jeiGzlFQPPAly3irk6KS7RVUxGJSXNXr63Y4iO1KPjMEOqn2BbO5Z92NR1h";
+  "Your Discord Webhook URL";
 const redColor = "#e06666";
 const greenColor = "#b6d7a8";
 const convertorSheetName = "Convertor";
