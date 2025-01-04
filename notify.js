@@ -1,19 +1,16 @@
-const discordUrl =
-  "Your Discord Webhook URL";
-const redColor = "#e06666";
-const greenColor = "#b6d7a8";
-const blackColor = "black";
-const convertorSheetName = "Convertor";
-const cryptoCurrencyApiUrl = "https://api.coincap.io/v2/assets";
+const DISCORD_WEBHOOK_URL = "Your Discord Webhook URL";
+const COLORS = {
+  RED: "#e06666",
+  GREEN: "#b6d7a8",
+  BLACK: "black",
+};
+const SHEET_NAME = "Convertor";
+const CRYPTOCURRENCY_API_URL = "https://api.coincap.io/v2/assets";
 
-const table = {
-  discordUrl,
-  colors: {
-    red: redColor,
-    green: greenColor,
-    black: blackColor,
-  },
-  sheetName: convertorSheetName,
+const CONFIG = {
+  discordUrl: DISCORD_WEBHOOK_URL,
+  colors: COLORS,
+  sheetName: SHEET_NAME,
   changingValueCells: ["H13", "E13", "B7", "C7", "E17"],
   changingColorCells: ["H11", "H15", "I2", "I4", "I3"],
   trackingCurrency: {
@@ -23,90 +20,138 @@ const table = {
   },
 };
 
+/**
+ * Posts a message to Discord using the webhook URL.
+ * @param {string} message - The message to post.
+ */
 function postMessageToDiscord(message) {
   const options = {
     method: "post",
     headers: {
       "Content-Type": "application/json",
     },
-    payload: JSON.stringify({
-      content: message,
-    }),
+    payload: JSON.stringify({ content: message }),
   };
-  UrlFetchApp.fetch(discordUrl, options);
+
+  try {
+    UrlFetchApp.fetch(CONFIG.discordUrl, options);
+  } catch (error) {
+    Logger.log("Error posting message to Discord: %s", error.toString());
+  }
 }
 
+/**
+ * Changes the background color of cells based on value comparison.
+ * @param {Array} values - Array containing the cell and its convertor.
+ * @param {number} price - The price to compare against.
+ */
 function changeCellColorBackgroundCompare(values, price) {
   const [cell, cellConvertor] = values;
   const currentValue = cell.getValue();
 
   let backgroundColor;
   if (currentValue > price) {
-    backgroundColor = table.colors.red;
+    backgroundColor = CONFIG.colors.RED;
   } else if (currentValue < price) {
-    backgroundColor = table.colors.green;
+    backgroundColor = CONFIG.colors.GREEN;
   } else {
-    backgroundColor = table.colors.black;
+    backgroundColor = CONFIG.colors.BLACK;
   }
 
   cell.setBackground(backgroundColor);
   cellConvertor.setBackground(backgroundColor);
 }
+
+/**
+ * Changes the background color of a cell based on its value.
+ * @param {GoogleAppsScript.Spreadsheet.Range} cell - The cell to change.
+ */
 function changeCellBackgroundColor(cell) {
   cell.setBackground(
-    cell.getValue() < 0 ? table.colors.red : table.colors.green
+    cell.getValue() < 0 ? CONFIG.colors.RED : CONFIG.colors.GREEN
   );
 }
 
+/**
+ * Retrieves the value of a cell in a given sheet and range.
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - The sheet to access.
+ * @param {string} range - The range notation of the cell.
+ * @returns {any} The value of the cell.
+ */
 function getCellValue(sheet, range) {
   return sheet.getRange(range).getValue();
 }
 
+/**
+ * Retrieves the range object of a cell in a given sheet and range.
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - The sheet to access.
+ * @param {string} range - The range notation of the cell.
+ * @returns {GoogleAppsScript.Spreadsheet.Range} The range object.
+ */
 function getCellRange(sheet, range) {
   return sheet.getRange(range);
 }
 
-function parseJsonResponse(cryptoCurrencyApiUrl) {
-  const response = UrlFetchApp.fetch(cryptoCurrencyApiUrl);
-  const jsonResponse = response.getContentText();
-  return JSON.parse(jsonResponse);
+/**
+ * Parses the JSON response from the cryptocurrency API.
+ * @returns {Object} The parsed JSON response.
+ */
+function parseJsonResponse() {
+  try {
+    const response = UrlFetchApp.fetch(CRYPTOCURRENCY_API_URL);
+    return JSON.parse(response.getContentText());
+  } catch (error) {
+    Logger.log("Error fetching cryptocurrency data: %s", error.toString());
+    return null;
+  }
 }
 
-function setColorBackgroundCells(table, currency, cells) {
-  table.trackingCurrency[currency] = cells;
+/**
+ * Sets the background color for tracking currency cells.
+ * @param {Object} config - The configuration object.
+ * @param {string} currency - The currency symbol.
+ * @param {Array} cells - The cells to set.
+ */
+function setColorBackgroundCells(config, currency, cells) {
+  config.trackingCurrency[currency] = cells;
 }
 
+/**
+ * Main function to execute the script logic.
+ */
 function myFunction() {
-  const parsedData = parseJsonResponse(cryptoCurrencyApiUrl);
+  const parsedData = parseJsonResponse();
+  if (!parsedData) return;
 
-  const sheet =
-    SpreadsheetApp.getActiveSpreadsheet().getSheetByName(convertorSheetName);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.sheetName);
 
-  const [h13, e13, b7, c7, e17] = table.changingValueCells.map((cell) =>
+  const [h13, e13, b7, c7, e17] = CONFIG.changingValueCells.map((cell) =>
     getCellValue(sheet, cell)
   );
   const [h11Helium, h15Solana, i2Solana, i3Helium, i4Sp8de] =
-    table.changingColorCells.map((cell) => getCellRange(sheet, cell));
-  setColorBackgroundCells(table, "SOL", [i2Solana, h15Solana]);
-  setColorBackgroundCells(table, "HNT", [i3Helium, h11Helium]);
-  setColorBackgroundCells(table, "SPX", [i4Sp8de, i4Sp8de]);
+    CONFIG.changingColorCells.map((cell) => getCellRange(sheet, cell));
+
+  setColorBackgroundCells(CONFIG, "SOL", [i2Solana, h15Solana]);
+  setColorBackgroundCells(CONFIG, "HNT", [i3Helium, h11Helium]);
+  setColorBackgroundCells(CONFIG, "SPX", [i4Sp8de, i4Sp8de]);
 
   const valueDifference = h13 - e13;
 
-  Object.keys(table.trackingCurrency).forEach((currency, i) => {
+  Object.keys(CONFIG.trackingCurrency).forEach((currency, i) => {
     const allItems = parsedData.data.find((item) => item.symbol === currency);
-    const itemsArray = Object.values(allItems);
-    changeCellColorBackgroundCompare(
-      table.trackingCurrency[currency],
-      allItems.priceUsd
-    );
-    sheet.getRange(i + 2, 1, 1, itemsArray.length).setValues([itemsArray]);
+    if (allItems) {
+      const itemsArray = Object.values(allItems);
+      changeCellColorBackgroundCompare(
+        CONFIG.trackingCurrency[currency],
+        allItems.priceUsd
+      );
+      sheet.getRange(i + 2, 1, 1, itemsArray.length).setValues([itemsArray]);
+    }
   });
 
   const h13BackgroundColor = getCellRange(sheet, "H13");
-
   h13BackgroundColor.setBackground(
-    e13 > h13 ? table.colors.red : table.colors.green
+    e13 > h13 ? CONFIG.colors.RED : CONFIG.colors.GREEN
   );
   changeCellBackgroundColor(getCellRange(sheet, "D7"));
   changeCellBackgroundColor(getCellRange(sheet, "G13"));
@@ -119,23 +164,23 @@ function myFunction() {
   }
 }
 
+/**
+ * Trigger function to set up a time-based trigger on edit.
+ * @param {GoogleAppsScript.Events.SheetsOnEdit} e - The onEdit event object.
+ */
 function onEdit(e) {
   const range = e.range;
   if (range.getA1Notation() !== "A7") return;
 
   const triggerName = "myFunction";
-  const intervalInMinutes = SpreadsheetApp.getActiveSpreadsheet()
-    .getActiveSheet()
-    .getRange("A7")
-    .getValue();
+  const intervalInMinutes = range.getValue();
 
   const triggers = ScriptApp.getProjectTriggers();
-  for (let i = 0; i < triggers.length; i++) {
-    if (triggers[i].getHandlerFunction() === triggerName) {
-      ScriptApp.deleteTrigger(triggers[i]);
-      break;
+  triggers.forEach((trigger) => {
+    if (trigger.getHandlerFunction() === triggerName) {
+      ScriptApp.deleteTrigger(trigger);
     }
-  }
+  });
 
   ScriptApp.newTrigger(triggerName)
     .timeBased()
