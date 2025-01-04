@@ -1,10 +1,10 @@
 # Sheets to Discord Crypto Alerts
 
-`sheets-to-discord-crypto-alerts` is a tool that monitors cryptocurrency prices using Google Sheets and sends alerts to a Discord channel via webhooks. The tool compares current prices against predefined thresholds and notifies you if the price moves up or down beyond the set range. It checks prices every 2 minutes, ensuring you stay updated with the latest market changes.
+`sheets-to-discord-crypto-alerts` is a tool that monitors cryptocurrency prices using Google Sheets and sends alerts to a Discord channel via webhooks. The tool compares current prices against predefined thresholds and notifies you if the price moves up or down beyond the set range. It checks prices every 1, 5, 10, 15, 30 minutes, ensuring you stay updated with the latest market changes.
 
 ## Features
 
-- **Real-time Monitoring**: Continuously checks cryptocurrency prices every 2 minutes.
+- **Real-time Monitoring**: Continuously checks cryptocurrency prices every 1, 5, 10, 15, 30 minutes.
 - **Customizable Alerts**: Set your own price thresholds to receive notifications when prices exceed or fall below these levels.
 - **Discord Integration**: Sends alerts directly to your Discord channel using webhooks, keeping you informed in real-time.
 
