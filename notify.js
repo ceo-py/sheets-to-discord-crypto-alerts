@@ -2,6 +2,7 @@ const discordUrl =
   "Your Discord Webhook URL";
 const redColor = "#e06666";
 const greenColor = "#b6d7a8";
+const blackColor = "black";
 const convertorSheetName = "Convertor";
 const cryptoCurrencyApiUrl = "https://api.coincap.io/v2/assets";
 
@@ -10,7 +11,7 @@ const table = {
   colors: {
     red: redColor,
     green: greenColor,
-    black: "black",
+    black: blackColor,
   },
   sheetName: convertorSheetName,
   changingValueCells: ["H13", "E13", "B7", "C7", "E17"],
