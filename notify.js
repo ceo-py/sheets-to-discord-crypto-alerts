@@ -123,7 +123,9 @@ function myFunction() {
   const parsedData = parseJsonResponse();
   if (!parsedData) return;
 
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.sheetName);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
+    CONFIG.sheetName
+  );
 
   const [h13, e13, b7, c7, e17] = CONFIG.changingValueCells.map((cell) =>
     getCellValue(sheet, cell)
@@ -156,10 +158,10 @@ function myFunction() {
   changeCellBackgroundColor(getCellRange(sheet, "D7"));
   changeCellBackgroundColor(getCellRange(sheet, "G13"));
 
-  if (
-    (e17 !== 0.0 && valueDifference >= b7) ||
-    (valueDifference <= c7 && e17 !== 0.0)
-  ) {
+  if (e17 === 0.0) {
+    return;
+  }
+  if (valueDifference >= b7 || valueDifference <= c7) {
     postMessageToDiscord(valueDifference.toString());
   }
 }
