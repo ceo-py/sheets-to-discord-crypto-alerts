@@ -6,8 +6,10 @@ const COLORS = {
 };
 const SHEET_NAME = "Convertor";
 const CRYPTOCURRENCY_API_URL = "https://api.coincap.io/v2/assets";
+const myFunction = "myFunction"
 
 const CONFIG = {
+  myFunction,
   discordUrl: DISCORD_WEBHOOK_URL,
   colors: COLORS,
   sheetName: SHEET_NAME,
@@ -174,7 +176,7 @@ function onEdit(e) {
   const range = e.range;
   if (range.getA1Notation() !== "A7") return;
 
-  const triggerName = "myFunction";
+  const triggerName = COLORS.myFunction;
   const intervalInMinutes = range.getValue();
 
   const triggers = ScriptApp.getProjectTriggers();
