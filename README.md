@@ -11,6 +11,8 @@
 ## Getting Started
 
 1. **Set Up Google Sheets**: Configure your Google Sheet to track the cryptocurrencies of interest.
+[Google sheets table](https://docs.google.com/spreadsheets/d/11uZqlR3o8t517-A1WMnI7FKwpJ01gV6VdHq-JbIR5R8/edit?usp=sharing)
+
 2. **Define Price Ranges**: Specify the price thresholds for each cryptocurrency.
 3. **Configure Discord Webhook**: Set up a Discord webhook to receive alerts.
 4. **Run the Script**: Execute the script to start monitoring and receiving alerts.
